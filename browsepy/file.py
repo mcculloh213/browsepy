@@ -16,7 +16,7 @@ from . import utils
 from . import stream
 
 from .compat import cached_property
-from .http import Headers
+from .httpclient import Headers
 
 from .exceptions import (
     OutsideDirectoryBase, OutsideRemovableBase,

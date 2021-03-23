@@ -39,7 +39,7 @@ class ArgParse(SafeArgumentParser):
     name = app.config['APPLICATION_NAME']
 
     default_host = os.getenv('BROWSEPY_HOST', '127.0.0.1')
-    default_port = os.getenv('BROWSEPY_PORT', '8080')
+    default_port = os.getenv('BROWSEPY_PORT', '8082')
 
     defaults = {
         'prog': name,

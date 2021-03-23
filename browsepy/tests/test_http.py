@@ -1,12 +1,12 @@
 
 import unittest
 
-import browsepy.http
+import browsepy.httpclient
 import browsepy.exceptions
 
 
 class TestHeaders(unittest.TestCase):
-    module = browsepy.http
+    module = browsepy.httpclient
 
     def test_simple(self):
         headers = self.module.Headers(

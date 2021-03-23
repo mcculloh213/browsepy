@@ -22,7 +22,7 @@ from browsepy.appconfig import CreateApp
 from browsepy.manager import PluginManager
 from browsepy.file import Node, secure_filename
 from browsepy.stream import tarfile_extension, stream_template
-from browsepy.http import etag
+from browsepy.httpclient import etag
 from browsepy.exceptions import (
     OutsideRemovableBase, OutsideDirectoryBase,
     InvalidFilenameError, InvalidPathError

@@ -15,7 +15,7 @@ class ByteQueue(queue.Queue):
     Synchronized byte queue, with an additional finish method.
 
     On a finished, :method:`put` will raise queue.Full exceptions and
-    :method:`get` will return empty bytes without blockng.
+    :method:`get` will return empty bytes without blocking.
     """
 
     def _init(self, maxsize):
