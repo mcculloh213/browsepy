@@ -38,7 +38,7 @@ class ArgParse(SafeArgumentParser):
     default_upload = app.config['DIRECTORY_UPLOAD']
     name = app.config['APPLICATION_NAME']
 
-    default_host = os.getenv('BROWSEPY_HOST', '127.0.0.1')
+    default_host = os.getenv('BROWSEPY_HOST', '0.0.0.0')
     default_port = os.getenv('BROWSEPY_PORT', '8082')
 
     defaults = {
