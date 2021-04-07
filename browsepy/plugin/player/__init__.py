@@ -1,7 +1,7 @@
 """
 Player plugin.
 
-This plugin is both functional and simple enough to server as example for:
+This plugin is both functional and simple enough to serve as example for:
 - Blueprint registration.
 - Widget with filtering function.
 - Custom file nodes.

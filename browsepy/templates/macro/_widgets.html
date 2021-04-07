@@ -1,0 +1,125 @@
+{% macro draw_widget(f, widget) %}
+  {%- if widget.type == 'button' or widget.type == 'link'-%}
+    <a
+      href="{% if widget.endpoint %}{{ url_for(widget.endpoint, path=f.urlpath) }}{% else %}{{ url_for(widget.href) }}{% endif %}"
+      class="
+        {{- widget.type -}}
+        {%- if widget.text %} text{% endif -%}
+        {%- if widget.css %} {{ widget.css }}{% endif -%}"
+      >{{ widget.text or '' }}</a>
+  {%- elif widget.type == 'script' -%}
+    <script
+      src="{{ widget.src or url_for(widget.endpoint, filename=widget.filename) }}"
+      ></script>
+  {%- elif widget.type == 'stylesheet' -%}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ widget.href or url_for(widget.endpoint, filename=widget.filename) }}"/>
+  {%- elif widget.type == 'upload' -%}
+    <form class="upload autosubmit{% if widget.css %} {{ widget.css }}{% endif %}"
+          method="post"
+          action="{{ widget.action or url_for(widget.endpoint, path=f.urlpath) }}"
+          enctype="multipart/form-data">
+      <label>
+        <span>{{ widget.text or 'Upload' }}</span>
+        <input class="button text suggested" type="file" name="file[]" multiple=""/>
+      </label>
+      <input class="button text" type="submit" value="{{ widget.text or 'Upload' }}"/>
+    </form>
+  {%- elif widget.type == 'html' -%}
+    {{ widget.html|safe }}
+  {%- endif -%}
+{% endmacro %}
+
+{% macro draw_widgets(f, place) %}
+  {%- for widget in f.widgets %}
+    {%- if widget.place == place %}
+      {{ draw_widget(f, widget) }}
+    {%- endif %}
+  {%- endfor %}
+{% endmacro %}
+
+{% macro flashed_messages(messages=None, container=True, transform={
+  'critical': 'danger',
+  'error': 'danger',
+  'info': 'info',
+  'warning': 'warning',
+  'debug': 'info',
+  'notset': 'info',
+  'message': 'info',
+}, default_category=None, dismissible=False) %}
+  {%- with messages = messages or get_flashed_messages(with_categories=True) %}
+    {%- if messages %} {# don't output anything if there are no messages #}
+      {%- if container %}
+        <div class="container flashed-messages">
+          <div class="row">
+            <div class="col-md-12">
+      {%- endif %}
+      {% for cat, msg in messages %}
+        <div class="alert alert-{{transform.get(cat.lower(), default_category or cat)}}{% if dismissible %} alert-dismissible{% endif %}" role="alert">
+          {% if dismissible %}
+            <button type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          {% endif %}
+          {{msg}}
+        </div>
+      {%- endfor %}
+      {%- if container %}
+            </div>
+          </div>
+        </div>
+      {%- endif %}
+    {%- endif %}
+  {%- endwith %}
+{% endmacro %}
+
+{% macro icon(type=None, extra_classes=[]) -%}
+ <span{{ ({'class': (['glyphicon', 'glyphicon-' + type] + extra_classes)|join(' ')})|xmlattr}}{{kwargs|xmlattr}}></span>
+{%- endmacro %}
+
+{% macro draw_header_widgets(f) %}
+  {%- for widget in f.widgets %}
+    {%- if widget.place == 'header' %}
+      {%- if widget.type == 'button' or widget.type == 'link'-%}
+        <a
+          href="{% if widget.endpoint %}
+                  {{ url_for(widget.endpoint, **widget.endpoint_params) }}
+                {% else %}
+                  {{ url_for(widget.href) }}
+                {% endif %}"
+          class="
+            {%- if widget.type == 'button' %}btn{% endif -%}
+            {%- if widget.text %} text{% endif -%}"
+          {%- if widget.type == 'button' %}role="button"{% endif -%}>
+            {%- if widget.css %}{{ icon(widget.css) }}{% endif -%}{{ widget.text or '' }}
+        </a>
+      {%- endif %}
+    {%- endif %}
+  {%- endfor %}
+{% endmacro %}
+
+{% macro draw_entry_actions(f) %}
+  {%- for widget in f.widgets %}
+    {%- if widget.place == 'entry-actions' %}
+      {%- if widget.type == 'button' or widget.type == 'link'-%}
+        <a
+          href="{%- if widget.endpoint -%}
+                  {{- url_for(widget.endpoint, **widget.endpoint_params) -}}
+                {%- else -%}
+                  {{- url_for(widget.href) -}}
+                {%- endif -%}"
+          class="
+            {%- if widget.type == 'button' %}btn{% endif -%}
+            {%- if widget.text %} text{% endif -%}"
+          {%- if widget.type == 'button' %}role="button"{% endif -%}>
+            {%- if widget.icon %}{{ icon(widget.icon, **widget.tooltip) }}{% endif -%}{{ widget.text or '' }}
+        </a>
+      {%- endif %}
+    {%- endif %}
+  {%- endfor %}
+{% endmacro %}

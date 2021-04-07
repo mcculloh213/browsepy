@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_form_field %}
+
+{% block title %}
+  {{- super() -}}
+  {{- ' - Create Authority' -}}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('text_digest.static', filename='css/style.css') }}"/>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('text_digest.static', filename='js/script.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  <h2>Create Authority</h2>
+  <form method="post" class="group">
+    {{ form.csrf_token }}
+    {{ render_form_field(form.domain) }}
+    <div class="group">
+      <a
+        class="button text long"
+        href="{{ url_for('browse') }}"
+        title="Go back">Cancel</a>
+      <input class="button text long suggested" type="submit" value="Accept" />
+    </div>
+  </form>
+{% endblock %}

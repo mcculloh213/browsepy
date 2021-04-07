@@ -1,0 +1,106 @@
+{# `_base.html` is the template all our other templates derive from. While
+   Flask-Bootstrap ships with its own base, it is good form to create a custom
+   one for our app, as it allows customizing some aspects.
+
+   Deriving from bootstap/base.html gives us a basic page scaffoling.
+
+   You can find additional information about template inheritance at
+
+   http://jinja.pocoo.org/docs/templates/#template-inheritance
+#}
+{%- extends "bootstrap/base.html" -%}
+
+{# Import necessary macros that enable fixes for legacy browsers. #}
+{%- import "bootstrap/fixes.html" as fixes -%}
+
+{% from "macro/_widgets.html" import flashed_messages %}
+
+{# Set default title #}
+{% block title %}{{ config.get('APPLICATION_NAME', 'browsepy') }}{% endblock %}
+
+{# Define base head block. To not replace the header, ``super()`` is used: #}
+{% block head %}
+{{ super() }}
+
+{#- Docs: http://pythonhosted.org/Flask-Bootstrap/macros.html#fixes
+   The sample application already contains the required static files. #}
+{{fixes.ie8()}}
+{% endblock %}
+
+{% block metas %}
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+{% endblock %}
+
+{# Import platform CSS & JS files. Check the documentation at
+   http://pythonhosted.org/Flask-Bootstrap/basic-usage.html#available-blocks
+   for an overview. #}
+{% block styles -%}
+  {# Call super or Bootstrap's own stylesheets will disappear! #}
+  {{ super() }}
+  {% block icon %}
+    {%- for i in (57, 60, 72, 76, 114, 120, 144, 152, 180) %}
+      <link
+        rel="apple-touch-icon"
+        sizes="{{ i }}x{{ i }}"
+        href="{{ url_for('static', filename='icon/apple-icon-{0}x{0}.png'.format(i)) }}">
+    {%- endfor %}
+    {%- for i in (192, 96, 32, 16) %}
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="{{ i }}x{{ i }}"
+        href="{{ url_for('static', filename='icon/android-icon-{0}x{0}.png'.format(i)) }}">
+    {%- endfor %}
+    <link
+      rel="manifest"
+      href="{{ url_for('metadata', filename='manifest.json') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta
+      name="msapplication-TileImage"
+      content="{{ url_for('static', filename='icon/ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
+  {% endblock %}
+{% endblock %}
+
+{% block navbar %}{{ super() }}{% endblock %}
+
+{% block content %}
+  {% block content_header %}{% endblock %}
+  {% block messages %}
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+      {%- if messages %}
+        <div class="row">
+          <div class="col-md-12">
+            {{ flashed_messages(messages, default_category='notset', dismissible=True) }}
+          </div>
+        </div>
+      {%- endif %}
+    {%- endwith %}
+  {% endblock %}
+  {% block content_body %}
+    <div class="container-fluid">
+      {% block container %}
+        <div class="jumbotron">
+          <h1>Welcome to Flask-Bootstrap</h1>
+          <p>
+            This example application demonstrates some (but not all!) of the
+            features of <a href="http://pythonhosted.org/Flask-Bootstrap">Flask-Bootstrap</a>.
+          </p>
+          <p>
+            <a class="btn btn-lg btn-default" role="button"
+               href="http://pythonhosted.org/Flask-Bootstrap">Show docs!</a>
+          </p>
+      </div>
+      {% endblock %}
+    </div>
+  {% endblock %}
+  {% block content_footer %}{% endblock %}
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+  {# Call super or Bootstrap's own scripts will disappear! #}
+  {{ super() }}
+  <script src="{{ url_for('text_digest.static', filename='js/script.js') }}"></script>
+{% endblock %}

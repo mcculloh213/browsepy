@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "form/_macros.html" import render_field %}
+
+{% block header %}
+  <h1>{{ breadcrumbs(file, circular=file.is_directory) }}</h1>
+  <h2>Create Directory</h2>
+{% endblock %}
+
+{% block content %}
+  <p>Create directory in {{ file.path }}?</p>
+  <form method="post" class="group">
+    {{ form.csrf_token }}
+    {{ render_field(form.name) }}
+    <a
+      class="long button text"
+      href="{{ url_for('browse', path=file.parent.urlpath) }}"
+      title="Go back"
+      >Cancel</a>
+    <input class="long button destructive text" type="submit" value="Create" />
+  </form>
+{% endblock %}

@@ -6,6 +6,8 @@ import warnings
 import flask
 import flask.config
 
+from flask_bootstrap import Bootstrap
+
 
 T = typing.TypeVar('T')
 
@@ -134,6 +136,7 @@ class CreateApp(object):
     def __call__(self):  # type: () -> Flask
         """Create Flask app instance."""
         app = self.flask_class(self.import_name, **self.options)
+        Bootstrap(app)
         with app.app_context():
             for fnc in self.registry:
                 fnc()

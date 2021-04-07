@@ -1,63 +1,7 @@
 {% extends "base.html" %}
-
-{% macro draw_widget(f, widget) -%}
-  {%- if widget.type == 'button' or widget.type == 'link'-%}
-    <a
-      href="{{ url_for(widget.endpoint, path=f.urlpath) }}"
-      class="
-        {{- widget.type -}}
-        {%- if widget.text %} text{% endif -%}
-        {%- if widget.css %} {{ widget.css }}{% endif -%}"
-      >{{ widget.text or '' }}</a>
-  {%- elif widget.type == 'script' -%}
-    <script
-      src="{{ widget.src or url_for(widget.endpoint, filename=widget.filename) }}"
-      ></script>
-  {%- elif widget.type == 'stylesheet' -%}
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ widget.href or url_for(widget.endpoint, filename=widget.filename) }}"/>
-  {%- elif widget.type == 'upload' -%}
-    <form class="upload autosubmit{% if widget.css %} {{ widget.css }}{% endif %}"
-          method="post"
-          action="{{ widget.action or url_for(widget.endpoint, path=file.urlpath) }}"
-          enctype="multipart/form-data">
-      <label>
-        <span>{{ widget.text or 'Upload' }}</span>
-        <input class="button text suggested" type="file" name="file[]" multiple=""/>
-      </label>
-      <input class="button text" type="submit" value="{{ widget.text or 'Upload' }}"/>
-    </form>
-  {%- elif widget.type == 'html' -%}
-    {{ widget.html|safe }}
-  {%- endif -%}
-{%- endmacro %}
-
-{% macro draw_widgets(f, place) -%}
-  {%- for widget in f.widgets -%}
-    {%- if widget.place == place -%}
-      {{ draw_widget(f, widget) }}
-    {%- endif -%}
-  {%- endfor -%}
-{%- endmacro %}
-
-{% macro th(text, property=None, type='text', colspan=1) -%}
-<th{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}>
-  {% if property %}
-    {% set urlpath = file.urlpath or None %}
-    {% set property_desc = '-{}'.format(property) %}
-    {% set prop = property_desc if sort_property == property else property %}
-    {% set active = ' active' if sort_property in (property, property_desc) else '' %}
-    {% set desc = ' desc' if sort_property == property_desc else '' %}
-    <a href="{{ url_for('sort', path=urlpath, property=prop) }}"
-       class="{{type}} sorting{{active}}{{desc}}"
-       >{{ text }}</a>
-  {% else %}
-    {{- text -}}
-  {% endif %}
-</th>
-{%- endmacro %}
+{% from "macro/_breadcrumbs.html" import breadcrumbs %}
+{% from "macro/_tables.html" import th %}
+{% from "macro/_widgets.html" import draw_widget, draw_widgets %}
 
 {% block title %}
   {{- super() -}}
@@ -83,6 +27,18 @@
 <h1>{{ breadcrumbs(file) }}</h1>
 {% endblock %}
 
+{% block messages %}
+{% with pending = get_flashed_messages(with_categories=true) %}
+  {% if pending %}
+    <ul class=flashes>
+    {% for category, message in pending %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
 {% block content %}
 {% block content_header %}
 <header>{{ draw_widgets(file, 'header') }}</header>
@@ -95,10 +51,10 @@
     <table class="browser">
         <thead>
             <tr>
-              {{ th('Name', 'text', 'text', 3) }}
-              {{ th('Mimetype', 'type') }}
-              {{ th('Modified', 'modified', 'numeric') }}
-              {{ th('Size', 'size', 'numeric') }}
+              {{ th(file, 'Name', sort_property, 'text', 'text', 3) }}
+              {{ th(file, 'Mimetype', sort_property, 'type') }}
+              {{ th(file, 'Modified', sort_property, 'modified', 'numeric') }}
+              {{ th(file, 'Size', sort_property, 'size', 'numeric') }}
             </tr>
         </thead>
         <tbody>

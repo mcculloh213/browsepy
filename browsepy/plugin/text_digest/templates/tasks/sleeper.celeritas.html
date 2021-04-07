@@ -1,0 +1,32 @@
+{% extends "_base.html" %}
+
+{% block content_header %}
+<div class="btn-group" role="group" aria-label="Basic example">
+  <a type="button" class="btn btn-primary" onclick="handleClick(3)">Short</a>
+  <a type="button" class="btn btn-primary" onclick="handleClick(6)">Medium</a>
+  <a type="button" class="btn btn-primary" onclick="handleClick(9)">Long</a>
+</div>
+{% endblock %}
+
+{% block container %}
+  <h3>Task Status</h3>
+  <br />
+  <div class="table-responsive table-striped bg-primary">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody id="tasks">
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('text_digest.static', filename='js/tasks/sleeper.js') }}"></script>
+{% endblock %}

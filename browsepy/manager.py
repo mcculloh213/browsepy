@@ -518,6 +518,7 @@ class MimetypePluginManager(RegistrablePluginManager):
     """Plugin mimetype function registration manager."""
 
     _default_mimetype_functions = mimetype.alternatives
+    _mimetype_functions = list(_default_mimetype_functions)
 
     def clear(self):
         """

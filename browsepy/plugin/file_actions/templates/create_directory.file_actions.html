@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% from "macro/_breadcrumbs.html" import breadcrumbs %}
 
 {% block title %}
   {{- super() -}}
   {%- if file and file.urlpath %} - {{ file.urlpath }}{% endif -%}
-  {{- ' - create directory' -}}
+  {{- ' - Create Directory' -}}
 {% endblock %}
 
 {% block styles %}
@@ -20,7 +21,7 @@
 
 {% block content %}
   <h1>{{ breadcrumbs(file, circular=True) }}</h1>
-  <h2>Create directory</h2>
+  <h2>Create Directory</h2>
   <form method="post" class="remove">
     <input
       class="entry" placeholder="Directory name" type="text" name="name"

@@ -43,14 +43,15 @@ def init_config():
         SECRET_KEY=os.urandom(4096),
         APPLICATION_NAME='browsepy',
         APPLICATION_TIME=0,
-        DIRECTORY_BASE=os.getcwd(),
-        DIRECTORY_START=None,
-        DIRECTORY_REMOVE=None,
-        DIRECTORY_UPLOAD=None,
+        DIRECTORY_BASE='/var/www/browsepy/root',
+        DIRECTORY_START='/var/www/browsepy/root',
+        DIRECTORY_REMOVE='/var/www/browsepy/root',
+        DIRECTORY_UPLOAD='/var/www/browsepy/root',
         DIRECTORY_TAR_BUFFSIZE=262144,
         DIRECTORY_TAR_COMPRESSION='gzip',
         DIRECTORY_TAR_COMPRESSLEVEL=1,
         DIRECTORY_DOWNLOADABLE=True,
+        MONGODB_SETTINGS=dict(db='browsepy', host='localhost', port=27017),
         USE_BINARY_MULTIPLES=True,
         PLUGIN_MODULES=[],
         PLUGIN_NAMESPACES=(
@@ -222,25 +223,25 @@ def browse(path):
     sort_fnc, sort_reverse = browse_sortkey_reverse(sort_property)
     directory = Node.from_urlpath(path)
     if directory.is_directory and not directory.is_excluded:
-        last_modified = max(
-            directory.content_mtime,
-            current_app.config['APPLICATION_TIME'],
-            )
-        response = stream_template(
+        # last_modified = max(
+        #     directory.content_mtime,
+        #     current_app.config['APPLICATION_TIME'],
+        #     )
+        response = render_template(
             'browse.html',
             file=directory,
             sort_property=sort_property,
             sort_fnc=sort_fnc,
             sort_reverse=sort_reverse,
             )
-        response.last_modified = last_modified
-        response.set_etag(
-            etag(
-                last_modified=last_modified,
-                sort_property=sort_property,
-                ),
-            )
-        response.make_conditional(request)
+        # response.last_modified = last_modified
+        # response.set_etag(
+        #     etag(
+        #         last_modified=last_modified,
+        #         sort_property=sort_property,
+        #         ),
+        #     )
+        # response.make_conditional(request)
         return response
     abort(404)
 
@@ -284,7 +285,7 @@ def remove(path):
         if request.method == 'GET':
             return render_template('remove.html', file=file)
         file.remove()
-        return redirect(url_for(".browse", path=file.parent.urlpath))
+        return redirect(url_for('.browse', path=file.parent.urlpath))
     abort(404)
 
 

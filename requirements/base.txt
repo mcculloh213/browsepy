@@ -13,9 +13,19 @@
 # - requirements/doc.txt
 #
 
+celery
 flask
+flask_bootstrap
+flask_mongoengine
+flask_wtf
 cookieman
+mongoengine
+pdfminer.six
+pdftotree
+pypandoc
+redis
 unicategories
+wtforms
 
 # compat
 importlib_resources ; python_version<'3.7'

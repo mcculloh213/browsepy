@@ -1,22 +1,3 @@
-{% macro breadcrumb(file) -%}
-  <a href="{{ url_for('browse', path=file.urlpath) }}"
-     {% if file.is_root %}class="root"{% endif %}
-     >{{ file.name }}</a>
-{%- endmacro %}
-
-{% macro breadcrumbs(file, circular=False) -%}
-  <ol class="path">
-    {% for parent in file.ancestors[::-1] %}
-      <li>{{ breadcrumb(parent) }}</li>
-    {% endfor %}
-    {% if circular and file.is_directory %}
-      <li>{{ breadcrumb(file) }}</li>
-    {% elif file.name %}
-      <li><span>{{ file.name }}</span></li>
-    {% endif %}
-  </ol>
-{%- endmacro %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,6 +37,7 @@
 </head>
 <body>
   {% block header %}{% endblock %}
+  {% block messages %}{% endblock %}
   {% block content %}{% endblock %}
   {% block footer %}{% endblock %}
   {% block scripts %}{% endblock %}

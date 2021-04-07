@@ -1,0 +1,16 @@
+{% macro th(file, text, sort_prop, property=None, type='text', colspan=1) -%}
+<th{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}>
+  {% if property %}
+    {% set urlpath = file.urlpath or None %}
+    {% set property_desc = '-{}'.format(property) %}
+    {% set prop = property_desc if sort_prop == property else property %}
+    {% set active = ' active' if sort_prop in (property, property_desc) else '' %}
+    {% set desc = ' desc' if sort_prop == property_desc else '' %}
+    <a href="{{ url_for('sort', path=urlpath, property=prop) }}"
+       class="{{type}} sorting{{active}}{{desc}}"
+       >{{ text }}</a>
+  {% else %}
+    {{- text -}}
+  {% endif %}
+</th>
+{%- endmacro %}

@@ -1,0 +1,27 @@
+###############################################################################
+#
+#  MIME media types and the extensions that represent them.
+#
+#  The format of this file is a media type on the left and zero or more
+#  filename extensions on the right.  Programs using this file will map
+#  files ending with those extensions to the associated type.
+#
+#  This file is part of the "mime-support" package.  Please report a bug using
+#  the "reportbug" command of the "reportbug" package if you would like new
+#  types or extensions to be added.
+#
+#  The reason that all types are managed by the mime-support package instead
+#  allowing individual packages to install types in much the same way as they
+#  add entries in to the mailcap file is so these types can be referenced by
+#  other programs (such as a web server) even if the specific support package
+#  for that type is not installed.
+#
+###############################################################################
+
+application/msword                                                         doc
+application/pdf                                                            pdf
+application/rtf                                                            rtf
+application/vnd.openxmlformats-officedocument.presentationml.presentation  pptx
+application/vnd.openxmlformats-officedocument.wordprocessingml.document    docx
+application/vnd.ms-powerpoint                                              ppt
+text/markdown                                                              md

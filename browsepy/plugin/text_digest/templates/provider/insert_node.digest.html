@@ -1,0 +1,45 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_form_field %}
+{% from "macro/_breadcrumbs.html" import breadcrumbs %}
+
+{% block title %}
+  {{- super() -}}
+  {%- if file and file.urlpath %} - {{ file.urlpath }}{% endif -%}
+  {{- ' - Register File' -}}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('text_digest.static', filename='css/style.css') }}"/>
+{% endblock %}
+
+{% block navbar %}
+  {{ super() }}
+  <h1>{{ breadcrumbs(file, circular=True) }}</h1>
+{% endblock %}
+
+{% block content_header %}
+  <h2>Register File</h2>
+{% endblock %}
+
+{% block container %}
+  <form method="post" class="remove">
+    {{ form.csrf_token }}
+    {{ render_form_field(form.displayname) }}
+    <div class="group">
+      <a
+        class="button text long"
+        href="{{ url_for('browse', path='' if not back_dir else back_dir) }}"
+        title="Go back">Cancel</a>
+      <input class="button text long suggested" type="submit" value="Accept" />
+    </div>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('text_digest.static', filename='js/script.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,116 @@
+{%- extends "_base.html" -%}
+{%- import "macro/_widgets.html" as widgets -%}
+
+{% block title %}
+  {{- super() -}}
+  {%- if current_authority %} - {{ current_authority }}{% endif -%}
+  {{- ' - ' + page.title -}}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'styles') }}#}
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'head') }}#}
+{% endblock %}
+
+{% block navbar %}
+  {{ super() }}
+  <h1>
+    {%- if current_authority %}
+      {{ current_authority }} &mdash; {{- ' ' + page.title -}}
+      {% else %}
+      {{- 'Text Digest '-}} &mdash; {{- ' ' + page.title -}}
+    {% endif -%}
+  </h1>
+{% endblock %}
+
+{% block content_header %}
+  <header>{{ widgets.draw_header_widgets(page) }}</header>
+{% endblock %}
+
+{% block container %}
+  {%- if files.total == 0 %}
+    <p>No files have been indexed!</p>
+  {%- else %}
+    <div class="table-responsive">
+      <table class="table table-primary table-striped table-hover">
+        <thead>
+          <tr>
+            <th colspan="4" scope="col">Name</th>
+            <th scope="col">URI</th>
+            <th scope="col">Mimetype</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for file in files.items %}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              {%- if file.link %}
+                <td>{{ widgets.draw_widget(file, file.link) }}</td>
+              {%- else %}
+                <td>{{ file.displayname }}</td>
+              {%- endif %}
+              {%- if file.widgets %}
+                <td colspan="2">{{ widgets.draw_entry_actions(file) }}</td>
+              {%- else %}
+                <td colspan="2"></td>
+              {%- endif %}
+              <td>{{ file.uri }}</td>
+              <td>{{ file.mimetype }}</td>
+            </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+  {%- endif %}
+{% endblock %}
+
+{% block content_footer %}
+<!-- Pagination Links-->
+<div class="text-right">
+  <a href="{{ url_for('text_digest.files', page=files.prev_num) }}"
+     class="btn btn-outline-dark
+     {%- if files.page == 1 %}disabled{% endif -%}">
+      &laquo;
+  </a>
+  <!-- Loop through the number of pages to display a link for each-->
+  {%- for page_num in files.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if- page_num %}
+      <!-- Check for the active page and set the link to "Active"-->
+      {%- if files.page == page_num %}
+        <a href="{{ url_for('text_digest.files', p=page_num) }}"
+           class="btn btn-dark">
+            {{ page_num }}
+        </a>
+        {%- else %}
+        <a href="{{ url_for('text_digest.files', p=page_num) }}"
+           class="btn btn-outline-dark">
+            {{ page_num }}
+        </a>
+      {%- endif %}
+    {%- endif %}
+  {%- endfor %}
+  <a href="{{ url_for('text_digest.files', page=files.next_num) }}"
+     class="btn btn-outline-dark
+     {%- if files.page == files.pages %}disabled{% endif -%}">
+      &raquo;
+  </a>
+</div>
+
+<p class="text-right mt-3">
+   Showing page {{ files.page }} of {{ files.pages }}
+</p>
+{% endblock %}
+
+{% block footer %}
+{#<footer>{{ draw_widgets(file, 'footer') }}</footer>#}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'scripts') }}#}
+{% endblock %}

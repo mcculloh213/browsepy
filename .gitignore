@@ -11,12 +11,17 @@ build
 env*
 wenv*
 package-lock.json
+logs
+logs/*
+root
+root/*
 
 **.build
 **.egg-info
 **.egg
 **.eggs
 **.egg-info
+**.log
 **.pyc
 
 **/node_modules

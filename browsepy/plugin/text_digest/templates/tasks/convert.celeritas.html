@@ -1,0 +1,83 @@
+{%- extends "_base.html" -%}
+{%- import "macro/_widgets.html" as widgets -%}
+{%- import "bootstrap/wtf.html" as wtf -%}
+
+{% block title %}
+  {{- super() -}}
+  {{- ' - ' + page.title -}}
+  {{- ' - ' + file.displayname -}}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'styles') }}#}
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'head') }}#}
+{% endblock %}
+
+{% block navbar %}
+  {{ super() }}
+  <h1>
+    {%- if current_authority %}
+      {{ current_authority }} &mdash; {{- ' ' + page.title -}}
+      {% else %}
+      {{- 'Text Digest '-}} &mdash; {{- ' ' + page.title + ' ' -}}
+    {% endif -%}
+    &mdash; {{- ' ' + file.displayname -}}
+  </h1>
+{% endblock %}
+
+{% block content_header %}
+  <header>{{ widgets.draw_header_widgets(page) }}</header>
+{% endblock %}
+
+{% block container %}
+  <h3>Convert File</h3>
+  <div class="container-fluid">
+    <form class="form form-horizontal" method="post" role="form"
+      action="{{ url_for('text_digest.transform_file', path=file.urlpath) }}">
+      {{ wtf.form_errors(form, hiddens="only") }}
+      {{ wtf.form_field(form.template) }}
+      <input class="btn btn-default" type="submit" value="Transform" />
+    </form>
+  </div>
+  <br />
+  <h3>Transformed Files</h3>
+  <div class="table-responsive table-striped table-hover">
+    {%- if not file.transformations -%}
+      <p>No files have been transformed.</p>
+    {%- else -%}
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th colspan="4" scope="col">Name</th>
+            <th scope="col">URI</th>
+            <th scope="col">Mimetype</th>
+          </tr>
+        </thead>
+        <tbody id="data">
+          {%- for f in files.items %}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              {%- if f.link %}
+                <td>{{ widgets.draw_widget(f, f.link) }}</td>
+              {%- else %}
+                <td>{{ f.displayname }}</td>
+              {%- endif %}
+              {%- if f.widgets %}
+                <td colspan="2">{{ widgets.draw_entry_actions(f) }}</td>
+              {%- else %}
+                <td colspan="2"></td>
+              {%- endif %}
+              <td>{{ f.uri }}</td>
+              <td>{{ f.mimetype }}</td>
+            </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    {%- endif -%}
+  </div>
+{% endblock %}

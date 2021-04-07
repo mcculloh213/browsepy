@@ -1,0 +1,75 @@
+{%- extends "_base.html" -%}
+{%- import "macro/_widgets.html" as widgets -%}
+
+{% block title %}
+  {{- super() -}}
+  {{- ' - ' + page.title -}}
+  {{- ' - ' + file.displayname -}}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'styles') }}#}
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+{#  {{ draw_widgets(file, 'head') }}#}
+{% endblock %}
+
+{% block navbar %}
+  {{ super() }}
+  <h1>
+    {%- if current_authority %}
+      {{ current_authority }} &mdash; {{- ' ' + page.title -}}
+      {% else %}
+      {{- 'Text Digest '-}} &mdash; {{- ' ' + page.title + ' ' -}}
+    {% endif -%}
+    &mdash; {{- ' ' + file.displayname -}}
+  </h1>
+{% endblock %}
+
+{% block content_header %}
+  <header>{{ widgets.draw_header_widgets(page) }}</header>
+{% endblock %}
+
+{% block container %}
+  <h3>All Tasks</h3>
+  <div class="table-responsive table-striped table-hover">
+    {%- if not file.tasks -%}
+      <p>{{ file.displayname|safe }} has no tasks!</p>
+    {%- else -%}
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Status</th>
+            <th scope="col">Name</th>
+            <th colspan="3" aria-colspan="2" scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody id="data">
+          {%- for task in file.tasks -%}
+            <tr id="ct-{{ task.id }}">
+              <th scope="row">{{ task.id }}</th>
+              <td class="ct-status">{{ task.status }}</td>
+              <td class="ct-name">{{ task.template.name }}</td>
+              <td class="ct-load">
+                <button type="button" class="btn btn-primary"
+                   onclick=loadTaskStatus({{ task.id|tojson }})>Load</button>
+              </td>
+              <td colspan="2" aria-colspan="2" class="ct-result">
+                {{- task.result or 'No Result' -}}
+              </td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    {%- endif -%}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('text_digest.static', filename='js/tasks/status.js') }}"></script>
+{% endblock %}
