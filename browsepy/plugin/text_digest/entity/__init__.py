@@ -9,27 +9,25 @@ from typing import Optional, Union
 from browsepy.compat import cached_property
 
 
-def connect(db: str,
-            host: str = 'localhost',
-            port: Union[str, int] = 27017,
-            default: Optional[str] = 'browsepy',
-            alias: Optional[str] = None,
-            disconnect_on_return: bool = False):
+def connect(alias: Optional[str] = None,
+            disconnect_on_return: bool = True):
     def connect_decorator(func):
-        if default and alias:
-            try:
-                me.connect(db=default, host=host, port=port)
-            except me.ConnectionFailure as cfe:
-                print('[Database] Error:', cfe)
-            finally:
-                me.connect(db=db, host=host, port=port, alias=alias)
+        if alias:
+            me.connect(db='browsepy',
+                       host='localhost',
+                       port=27017,
+                       alias=alias,
+                       )
         else:
-            me.connect(db=db, host=host, port=port)
+            me.connect(db='browsepy',
+                       host='localhost',
+                       port=27017,
+                       )
 
         @wraps(func)
         def connect_wrapper(*args, **kwargs):
             _out = func(*args, **kwargs)
-            if disconnect_on_return and default and alias:
+            if disconnect_on_return and alias:
                 me.disconnect(alias=alias)
             return _out
         return connect_wrapper
@@ -40,6 +38,7 @@ class Authority(Document):
     domain = me.StringField(required=True, unique=True,
                             min_length=8, max_length=64)
     created = me.DateTimeField(default=datetime.now(tz.utc))
+    meta = {'db_alias': 'celeritas'}
 
 
 AuthorityForm = model_form(Authority, only=['domain'],
@@ -59,12 +58,14 @@ class TaskParameter(me.EmbeddedDocument):
     default_value = me.DynamicField(default=None, null=True)
     is_required = me.BooleanField(default=True)
     is_kwarg = me.BooleanField(default=False)
+    meta = {'db_alias': 'celeritas'}
 
 
 class AsyncTask(Document):
     name = me.StringField(required=True, unique=True)
     description = me.StringField(default='NO DESCRIPTION')
     parameters = me.EmbeddedDocumentListField(TaskParameter)
+    meta = {'db_alias': 'celeritas'}
 
 
 class DeferredTask(Document):
@@ -74,6 +75,7 @@ class DeferredTask(Document):
     status = me.StringField(default='PENDING')
     result = me.DynamicField(default=None, null=True)
     created = me.DateTimeField(default=datetime.now(tz.utc))
+    meta = {'db_alias': 'celeritas'}
 
     @staticmethod
     def template_label_modifier(obj):
@@ -102,6 +104,7 @@ class Widget(me.EmbeddedDocument):
     filename = me.StringField(default=None, null=True)
     action = me.StringField(default=None, null=True)
     html = me.StringField(default=None, null=True)
+    meta = {'db_alias': 'celeritas'}
 
     @classmethod
     def create_button(cls, place, endpoint=None,
@@ -176,6 +179,7 @@ class FileIndex(Document):
     widgets = me.EmbeddedDocumentListField(Widget)
     created = me.DateTimeField(default=datetime.now(tz.utc))
     updated = me.DateTimeField(default=datetime.now(tz.utc))
+    meta = {'db_alias': 'celeritas'}
 
     @cached_property
     def link(self):
@@ -201,6 +205,7 @@ InsertFileForm = model_form(FileIndex, only=['displayname'],
 class TextDigest(Document):
     method = me.StringField(reqired=True)
     outputs = me.StringField(required=True)
+    meta = {'db_alias': 'celeritas'}
 
 
 class TextCorpus(Document):
@@ -210,8 +215,10 @@ class TextCorpus(Document):
                                            reverse_delete_rule=me.CASCADE))
     created = me.DateTimeField(default=datetime.now(tz.utc))
     updated = me.DateTimeField(default=datetime.now(tz.utc))
+    meta = {'db_alias': 'celeritas'}
 
 
 class ApplicationPage(Document):
     title = me.StringField(required=True, unique=True)
     widgets = me.EmbeddedDocumentListField(Widget)
+    meta = {'db_alias': 'celeritas'}

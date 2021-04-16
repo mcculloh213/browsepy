@@ -20,6 +20,7 @@ flask_mongoengine
 flask_wtf
 cookieman
 mongoengine
+nltk
 pdfminer.six
 pdftotree
 pypandoc
